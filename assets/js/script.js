@@ -44,6 +44,7 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
+
 $('.list-group').on('click', 'p', function(){
   var text =  $(this)
     .text()
@@ -119,6 +120,49 @@ $('.list-group').on('blur', 'input[type="text"]', function(){
     .text(date);
 
   $(this).replaceWith(taskSpan);
+});
+
+
+$('.card .list-group').sortable({
+  connectWith: $('.card .list-group'),
+  scroll: false,
+  tolerance: 'pointer',
+  helper: 'clone',
+  update: function(event){
+    var tempArr = [];
+
+    $(this).children().each(function(){  
+      var text = $(this)
+        .find('p')
+        .text()
+        .trim();
+
+      var date = $(this)
+        .find('span')
+        .text()
+        .trim();
+
+      tempArr.push({
+        text: text,
+        date: date
+      });
+    });
+
+    var arrName = $(this)
+      .attr('id')
+      .replace('list-','');
+
+    tasks[arrName] = tempArr;
+    saveTasks();
+  }
+});
+
+$('#trash').droppable({
+  accept: '.card .list-group-item',
+  tolerance: 'touch',
+  drop: function(event, ui){
+    ui.draggable.remove();
+  }
 });
 
 
